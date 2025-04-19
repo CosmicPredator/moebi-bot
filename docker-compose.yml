@@ -1,0 +1,7 @@
+services:
+  moebi_bot:
+    build: .
+    container_name: moebi_bot
+    stdin_open: true
+    tty: true
+    restart: on-failure

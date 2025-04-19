@@ -40,7 +40,8 @@ public class BotService(DiscordSocketClient client,
                 _contextLogger.Error("No guild ID was provided.");
                 await StopAsync(cancellationToken);
             }
-            await interactionService.RegisterCommandsToGuildAsync(ulong.Parse(guildId!));
+            //await interactionService.RegisterCommandsToGuildAsync(ulong.Parse(guildId!));
+            await interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
             
             _contextLogger.Information("Logged in as {user}", client.CurrentUser.Username);
             _contextLogger.Information("Socket latency: {latency}ms", client.Latency);
