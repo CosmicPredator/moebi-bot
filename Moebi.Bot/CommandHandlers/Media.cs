@@ -6,11 +6,24 @@ using Serilog;
 
 namespace Moebi.Bot.CommandHandlers;
 
+/// <summary>
+/// Defines interaction commands related to AniList media (anime and manga).
+/// </summary>
 [Group("media", "Set of commands related to anime and manga.")]
 public class Media(MediaRepository mediaRepository) : InteractionModuleBase<SocketInteractionContext>
 {
+    /// <summary>
+    /// Logger scoped to the Media command handler.
+    /// </summary>
     private readonly ILogger _contextLogger = Log.ForContext<Media>();
 
+    
+    /// <summary>
+    /// Searches for anime or manga based on a user-provided query and media type.
+    /// </summary>
+    /// <param name="searchQuery">The search string provided by the user.</param>
+    /// <param name="type">The type of media (Anime or Manga) to search for.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     [SlashCommand("search", "Search anime or manga")]
     public async Task SearchAnimeAsync(string searchQuery, MediaType type)
     {
@@ -34,7 +47,12 @@ public class Media(MediaRepository mediaRepository) : InteractionModuleBase<Sock
             await RespondAsync("Something went wrong.", ephemeral: true);
         }
     }
-
+    
+    /// <summary>
+    /// Handles the selection of a media item from the search results menu.
+    /// </summary>
+    /// <param name="mediaId">The ID of the selected media item.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     [ComponentInteraction("media_search_select", true)]
     public async Task HandleMediaSearchSelectAsync(string mediaId)
     {

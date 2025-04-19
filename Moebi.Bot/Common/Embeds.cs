@@ -5,10 +5,22 @@ using Moebi.Bot.Anilist.Models.Media;
 
 namespace Moebi.Bot.Common;
 
+/// <summary>
+/// Provides utility methods for building various Discord embed messages for the bot.
+/// </summary>
 public static class Embeds
 {
+    /// <summary>
+    /// The URL to the AniList logo used as a thumbnail in embed messages.
+    /// </summary>
     private const string AnilistLogoUrl =
         "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/AniList_logo.svg/2048px-AniList_logo.svg.png";
+    
+    /// <summary>
+    /// Creates a simple "ping" embed displaying the bot's latency.
+    /// </summary>
+    /// <param name="latency">The measured latency in milliseconds.</param>
+    /// <returns>A green-colored <see cref="Embed"/> showing the latency.</returns>
     public static Embed PingEmbed(ref int latency)
     {
         return new EmbedBuilder()
@@ -22,6 +34,11 @@ public static class Embeds
             .Build();
     }
 
+    /// <summary>
+    /// Creates a detailed embed for a specific media (anime/manga) using AniList data.
+    /// </summary>
+    /// <param name="mediaDetail">The media detail model containing the media's information.</param>
+    /// <returns>An <see cref="Embed"/> with media information, cover image, and description.</returns>
     public static Embed MediaDetailEmbed(ref MediaDetailModel mediaDetail)
     {
         var fields = new List<EmbedFieldBuilder>()
@@ -53,6 +70,12 @@ public static class Embeds
         return embedBuilder.Build();
     }
 
+    /// <summary>
+    /// Creates a search results embed listing media found for a given query.
+    /// </summary>
+    /// <param name="mediaSearch">The media search result model.</param>
+    /// <param name="searchQuery">The original search query entered by the user.</param>
+    /// <returns>An <see cref="Embed"/> listing media titles and formats.</returns>
     public static Embed MediaSearchEmbed(ref MediaSearchModel mediaSearch, string searchQuery)
     {
         var description = "";
@@ -68,6 +91,12 @@ public static class Embeds
             .Build();
     }
 
+    /// <summary>
+    /// Creates a search results embed listing characters found for a given query.
+    /// </summary>
+    /// <param name="characterDetail">The character search result model.</param>
+    /// <param name="searchQuery">The original search query entered by the user.</param>
+    /// <returns>An <see cref="Embed"/> listing character names and alternative names.</returns>
     public static Embed CharacterSearchEmbed(ref CharacterSearchModel characterDetail, string searchQuery)
     {
         var description = "";

@@ -4,8 +4,16 @@ using Moebi.Bot.Anilist.Models.Media;
 
 namespace Moebi.Bot.Common;
 
+/// <summary>
+/// Provides reusable Discord message components (like select menus) for media and character search results.
+/// </summary>
 public static class Components
 {
+    /// <summary>
+    /// Builds a select menu component allowing the user to choose a media (anime/manga) from search results.
+    /// </summary>
+    /// <param name="searchModel">The media search model containing the list of media options.</param>
+    /// <returns>A Discord <see cref="MessageComponent"/> representing the select menu.</returns>
     public static MessageComponent MediaSearchSelectMenu(ref MediaSearchModel searchModel)
     {
         var selectMenu = new SelectMenuBuilder()
@@ -23,6 +31,11 @@ public static class Components
         return component;
     }
     
+    /// <summary>
+    /// Builds a select menu component allowing the user to choose a character from search results.
+    /// </summary>
+    /// <param name="searchModel">The character search model containing the list of character options.</param>
+    /// <returns>A Discord <see cref="MessageComponent"/> representing the select menu.</returns>
     public static MessageComponent CharacterSearchSelectMenu(ref CharacterSearchModel searchModel)
     {
         var selectMenu = new SelectMenuBuilder()

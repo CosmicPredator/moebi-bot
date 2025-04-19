@@ -7,6 +7,13 @@ using Serilog;
 
 namespace Moebi.Bot;
 
+/// <summary>
+/// Service responsible for managing the Discord bot lifecycle (startup, command registration, and shutdown).
+/// </summary>
+/// <param name="client">The Discord socket client.</param>
+/// <param name="configuration">Application configuration settings.</param>
+/// <param name="interactionService">Service for managing interactions (slash commands, etc.).</param>
+/// <param name="interactionHandler">Handler for initializing and processing interactions.</param>
 public class BotService(DiscordSocketClient client,
     IConfiguration configuration,
     InteractionService interactionService,
@@ -14,6 +21,10 @@ public class BotService(DiscordSocketClient client,
 {
     private readonly ILogger _contextLogger = Log.ForContext<InteractionHandler>();
     
+    /// <summary>
+    /// Starts the bot service, logs in to Discord, initializes handlers, and registers commands.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token to handle task cancellation.</param>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         interactionService.Log += LogMapper.SerilogMapper;
@@ -43,6 +54,10 @@ public class BotService(DiscordSocketClient client,
         await client.SetGameAsync("Anime", null, ActivityType.Watching);
     }
 
+    /// <summary>
+    /// Stops the bot service, disconnects and logs out from Discord.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token to handle task cancellation.</param>
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         await client.StopAsync();
