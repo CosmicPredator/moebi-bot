@@ -45,4 +45,30 @@ public class Character(CharacterRepository characterRepository) : InteractionMod
             await FollowupAsync("Something went wrong.", ephemeral: true);
         }
     }
+
+    [ComponentInteraction("character_search_select", true)]
+    public async Task HandleCharacterDetailAsync(int characterId)
+    {
+        _contextLogger.Information("Trying to get character details for id: {0}", characterId);
+        await DeferAsync();
+        try
+        {
+            var characterDetail = await characterRepository.GetCharacterDetailsAsync(characterId);
+            if (characterDetail is null)
+            {
+                await FollowupAsync($"No character associated with id: **{characterId}**", ephemeral: true);
+                return;
+            }
+
+            await ModifyOriginalResponseAsync((response) =>
+            {
+                response.Embed = Embeds.CharacterDetailEmbed(ref characterDetail);
+            });
+        }
+        catch (Exception ex)
+        {
+            _contextLogger.Error(ex, "Error while performing character search command.");
+            await FollowupAsync("Something went wrong.", ephemeral: true);
+        }
+    }
 }

@@ -34,17 +34,17 @@ public class Media(MediaRepository mediaRepository) : InteractionModuleBase<Sock
             var searchResult = await mediaRepository.SearchMedia(type, searchQuery);
             if (searchResult is null || searchResult.data.Page.media.Length == 0)
             {
-                await RespondAsync($"No media found with the name **{searchQuery}**", ephemeral: true);
+                await FollowupAsync($"No media found with the name **{searchQuery}**", ephemeral: true);
                 return;
             }
-            await RespondAsync(
+            await FollowupAsync(
                 embed: Embeds.MediaSearchEmbed(ref searchResult, searchQuery),
                 components: Components.MediaSearchSelectMenu(ref searchResult));
         }
         catch (Exception ex)
         {
             _contextLogger.Error(ex, "Error while performing media search command.");
-            await RespondAsync("Something went wrong.", ephemeral: true);
+            await FollowupAsync("Something went wrong.", ephemeral: true);
         }
     }
     
@@ -54,16 +54,16 @@ public class Media(MediaRepository mediaRepository) : InteractionModuleBase<Sock
     /// <param name="mediaId">The ID of the selected media item.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     [ComponentInteraction("media_search_select", true)]
-    public async Task HandleMediaSearchSelectAsync(string mediaId)
+    public async Task HandleMediaSearchSelectAsync(int mediaId)
     {
         _contextLogger.Information("Getting media from provided media ID.");
         await DeferAsync();
         try
         {
-            var mediaDetail = await mediaRepository.GetMediaDetail(Convert.ToInt32(mediaId));
+            var mediaDetail = await mediaRepository.GetMediaDetail(mediaId);
             if (mediaDetail is null)
             {
-                await RespondAsync("No media found with the given media ID.", ephemeral: true);
+                await FollowupAsync("No media found with the given media ID.", ephemeral: true);
                 return;
             }
             await ModifyOriginalResponseAsync((response) =>
@@ -74,7 +74,7 @@ public class Media(MediaRepository mediaRepository) : InteractionModuleBase<Sock
         catch (Exception ex)
         {
             _contextLogger.Error(ex, "Error while performing media detail interaction.");
-            await RespondAsync("Something went wrong.", ephemeral: true);
+            await FollowupAsync("Something went wrong.", ephemeral: true);
         }
     }
 }

@@ -13,7 +13,7 @@ public class Data
 public class Page
 {
     public PageInfo pageInfo { get; set; }
-    public Characters[] characters { get; set; }
+    public Character[] characters { get; set; }
 }
 
 public class PageInfo

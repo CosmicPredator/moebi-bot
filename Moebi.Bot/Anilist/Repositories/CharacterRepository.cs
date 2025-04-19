@@ -23,4 +23,14 @@ public class CharacterRepository(IAnilistClient client)
         var response = await client.PostAsync<CharacterSearchModel>(Queries.CharacterSearchQuery, vars);
         return response;
     }
+
+    public async Task<CharacterDetailModel?> GetCharacterDetailsAsync(int id)
+    {
+        var vars = new Dictionary<string, int>
+        {
+            { "id", id }
+        };
+        var response = await client.PostAsync<CharacterDetailModel>(Queries.CharacterDetailQuery, vars);
+        return response;
+    }
 }

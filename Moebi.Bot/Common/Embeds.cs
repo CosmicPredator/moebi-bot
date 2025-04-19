@@ -1,3 +1,4 @@
+using System.Text;
 using Discord;
 using Moebi.Bot.Anilist.Models;
 using Moebi.Bot.Anilist.Models.Character;
@@ -41,30 +42,69 @@ public static class Embeds
     /// <returns>An <see cref="Embed"/> with media information, cover image, and description.</returns>
     public static Embed MediaDetailEmbed(ref MediaDetailModel mediaDetail)
     {
-        var fields = new List<EmbedFieldBuilder>()
-        {
-            new EmbedFieldBuilder()
+        List<EmbedFieldBuilder> embedFields = [new EmbedFieldBuilder()
                 .WithName("Format")
-                .WithValue(mediaDetail.data.Media.format!.Replace("_", " "))
+                .WithValue(mediaDetail.data.Media.format == null ? "N/A" : mediaDetail.data.Media.format.ToTitleCase())
                 .WithIsInline(true),
             new EmbedFieldBuilder()
                 .WithName("Status")
-                .WithValue(mediaDetail.data.Media.status)
+                .WithValue(mediaDetail.data.Media.status.ToTitleCase() ?? "N/A")
                 .WithIsInline(true),
             new EmbedFieldBuilder()
                 .WithName("Season")
-                .WithValue($"{mediaDetail.data.Media.season} {mediaDetail.data.Media.seasonYear}")
+                .WithValue($"{mediaDetail.data.Media.season.ToTitleCase() ?? "N/A"} {mediaDetail.data.Media.seasonYear.ToString() ?? "N/A"}")
                 .WithIsInline(true),
-        };
+            new EmbedFieldBuilder()
+                .WithName("Type")
+                .WithValue(mediaDetail.data.Media.type.ToTitleCase())
+                .WithIsInline(true),
+            new EmbedFieldBuilder()
+                .WithName("Favourites")
+                .WithValue(mediaDetail.data.Media.favourites.ToString() ?? "N/A")
+                .WithIsInline(true),
+            new EmbedFieldBuilder()
+                .WithName("Average Score")
+                .WithValue(mediaDetail.data.Media.averageScore.ToString() ?? "N/A")
+                .WithIsInline(true)];
+
+        switch (mediaDetail.data.Media.type)
+        {
+            case "ANIME":
+                embedFields.Add(new EmbedFieldBuilder()
+                    .WithName("Total Episodes")
+                    .WithValue(mediaDetail.data.Media.episodes.ToString() ?? "N/A")
+                    .WithIsInline(true));
+                embedFields.Add(new EmbedFieldBuilder()
+                    .WithName("Duration")
+                    .WithValue($"{mediaDetail.data.Media.duration.ToString()}mins/episode" ?? "N/A")
+                    .WithIsInline(true));
+                break;
+            case "MANGA":
+                embedFields.Add(new EmbedFieldBuilder()
+                    .WithName("Total Chapters")
+                    .WithValue(mediaDetail.data.Media.chapters.ToString() ?? "N/A")
+                    .WithIsInline(true));
+                embedFields.Add(new EmbedFieldBuilder()
+                    .WithName("Total Volumes")
+                    .WithValue(mediaDetail.data.Media.volumes.ToString() ?? "N/A")
+                    .WithIsInline(true));
+                break;
+        }
+
+        var descriptionString = new StringBuilder();
+        descriptionString.Append($"[AniList]({mediaDetail.data.Media.siteUrl}) | [MAL](https://myanimelist.net/anime/{mediaDetail.data.Media.idMal})");
+        descriptionString.Append("\n\n");
+        descriptionString.Append($"_{mediaDetail.data.Media.description!.StripHtmlTags()}_");
 
         var embedBuilder = new EmbedBuilder()
             .WithTitle(mediaDetail.data.Media.title.romaji)
-            .WithFields(fields)
-            .WithDescription(mediaDetail.data.Media.description!.StripHtmlTags())
+            .WithFields(embedFields)
+            .WithDescription(descriptionString.ToString())
+            .WithColor(Color.Parse(Extensions.GetRandomHexColor()))
             .WithThumbnailUrl(AnilistLogoUrl)
             .WithImageUrl($"https://img.anili.st/Media/{mediaDetail.data.Media.id}");
 
-        if (string.IsNullOrEmpty(mediaDetail.data.Media.coverImage.color))
+        if (!string.IsNullOrEmpty(mediaDetail.data.Media.coverImage.color))
             embedBuilder.WithColor(Color.Parse(mediaDetail.data.Media.coverImage.color));
         
         return embedBuilder.Build();
@@ -112,6 +152,65 @@ public static class Embeds
             .WithDescription(description)
             .WithThumbnailUrl(AnilistLogoUrl)
             .Build();
+    }
+
+    public static Embed CharacterDetailEmbed(ref CharacterDetailModel details)
+    {
+        string dob = "N/A";
+        var dobData = details.data.Character.dateOfBirth;
+
+        if (dobData.day is not null && dobData.month is not null && dobData.year is not null)
+        {
+            dob = $"{dobData.month}/{dobData.day}/{dobData.year}";
+        }
+        
+        List<EmbedFieldBuilder> embedFields = [
+            new EmbedFieldBuilder()
+                .WithName("Age")
+                .WithValue(details.data.Character.age ?? "N/A")
+                .WithIsInline(true),
+            new EmbedFieldBuilder()
+                .WithName("Blood Type")
+                .WithValue(details.data.Character.bloodType ?? "N/A")
+                .WithIsInline(true),
+            new EmbedFieldBuilder()
+                .WithName("Gender")
+                .WithValue(details.data.Character.gender ?? "N/A")
+                .WithIsInline(true),
+            new EmbedFieldBuilder()
+                .WithName("DOB")
+                .WithValue(dob)
+                .WithIsInline(true),
+            new EmbedFieldBuilder()
+                .WithName("Favourites")
+                .WithValue(details.data.Character.favourites.ToString() ?? "N/A")
+                .WithIsInline(true)
+        ];
+        
+        StringBuilder descriptionBuilder = new StringBuilder();
+        descriptionBuilder.Append($"_{details.data.Character.description!.StripHtmlTags()}_");
+        descriptionBuilder.Append("\n\n");
+        descriptionBuilder.Append("**Alternative Names**\n");
+        if (details.data.Character.name.alternative.Length != 0)
+            descriptionBuilder.AppendJoin("• ", details.data.Character.name.alternative);
+        else
+            descriptionBuilder.Append("_None_");
+        descriptionBuilder.Append("\n\n");
+        descriptionBuilder.Append("**Alternative Spoiler Names**\n");
+        if (details.data.Character.name.alternativeSpoiler.Length != 0)
+            descriptionBuilder.AppendJoin(" • ", details.data.Character.name.alternativeSpoiler);
+        else
+            descriptionBuilder.Append("_None_");
+        descriptionBuilder.Append("\n\n");
+
+        var embedBuilder = new EmbedBuilder()
+            .WithTitle(details.data.Character.name.userPreferred)
+            .WithDescription(descriptionBuilder.ToString())
+            .WithColor(Color.Parse(Extensions.GetRandomHexColor()))
+            .WithThumbnailUrl(AnilistLogoUrl)
+            .WithFields(embedFields)
+            .WithImageUrl(details.data.Character.image.large);
+        return embedBuilder.Build();
     }
 }
 

@@ -9,6 +9,7 @@ public static class Queries
     query ($id: Int) {
       Media (id: $id) {
         id
+        idMal
         title {
           romaji
           english
@@ -19,6 +20,16 @@ public static class Queries
         status
         season
         seasonYear
+        favourites
+        popularity
+        favourites
+        episodes
+        duration
+        chapters
+        volumes
+        averageScore
+        siteUrl
+        type
         coverImage {
           color
         }
@@ -69,6 +80,38 @@ public static class Queries
           }
           id
         }
+      }
+    }";
+
+    public const string CharacterDetailQuery = @"
+    query ($id: Int) {
+      Character (id: $id) {
+        ...CharacterInfo
+      }
+    }
+
+    fragment CharacterInfo on Character {
+      age
+      name {
+        userPreferred
+        alternative
+        alternativeSpoiler
+        first
+        last
+        full
+      }
+      bloodType
+      dateOfBirth {
+        day
+        month
+        year
+      }
+      description(asHtml: true)
+      favourites
+      gender
+      id
+      image {
+        large
       }
     }";
 }

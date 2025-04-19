@@ -23,7 +23,7 @@ public static class Components
 
         foreach (var media in searchModel.data.Page.media)
         {
-            selectMenu.AddOption(media.title.romaji, media.id.ToString());
+            selectMenu.AddOption($"{media.title.romaji} ({media.format ?? "N/A"})", media.id.ToString());
         }
         var component = new ComponentBuilder()
             .WithSelectMenu(selectMenu)

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Moebi.Bot.Common;
@@ -7,6 +8,8 @@ namespace Moebi.Bot.Common;
 /// </summary>
 public static class Extensions
 {
+    private static Random random = new Random();
+    
     /// <summary>
     /// Removes all HTML tags from the given string.
     /// </summary>
@@ -15,5 +18,22 @@ public static class Extensions
     public static string StripHtmlTags(this string text)
     {
         return Regex.Replace(text, "<.*?>", string.Empty);
+    }
+
+    public static string GetRandomHexColor()
+    {
+        int red = random.Next(0, 256);   // 0 to 255
+        int green = random.Next(0, 256);
+        int blue = random.Next(0, 256);
+
+        return $"#{red:X2}{green:X2}{blue:X2}";
+    }
+
+    public static string? ToTitleCase(this string? text)
+    {
+        if (text is null) return null;
+        text = text.Replace("_", " ");
+        var textInfo = CultureInfo.CurrentCulture.TextInfo;
+        return textInfo.ToTitleCase(text.ToLower());
     }
 }
