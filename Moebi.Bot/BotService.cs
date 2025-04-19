@@ -1,0 +1,51 @@
+using Discord;
+using Discord.Interactions;
+using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+
+namespace Moebi.Bot;
+
+public class BotService(DiscordSocketClient client,
+    IConfiguration configuration,
+    InteractionService interactionService,
+    InteractionHandler interactionHandler) : IHostedService
+{
+    private readonly ILogger _contextLogger = Log.ForContext<InteractionHandler>();
+    
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        interactionService.Log += LogMapper.SerilogMapper;
+        client.Log += LogMapper.SerilogMapper;
+
+        await interactionHandler.InitializeAsync();
+
+        client.Ready += async () =>
+        {
+            var guildId = configuration["Discord:GuildId"];
+            if (string.IsNullOrWhiteSpace(guildId))
+            {
+                _contextLogger.Error("No guild ID was provided.");
+                await StopAsync(cancellationToken);
+            }
+            await interactionService.RegisterCommandsToGuildAsync(ulong.Parse(guildId!));
+            
+            _contextLogger.Information("Logged in as {user}", client.CurrentUser.Username);
+            _contextLogger.Information("Socket latency: {latency}ms", client.Latency);
+
+            await Task.CompletedTask;
+        };
+        
+        await client.LoginAsync(TokenType.Bot, configuration["Discord:BotToken"]);
+        await client.StartAsync();
+        
+        await client.SetGameAsync("Anime", null, ActivityType.Watching);
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        await client.StopAsync();
+        await client.LogoutAsync();
+    }
+}

@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moebi.Bot", "Moebi.Bot\Moebi.Bot.csproj", "{29F8B36E-84D0-4B86-84C0-7C9E4497DA13}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29F8B36E-84D0-4B86-84C0-7C9E4497DA13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29F8B36E-84D0-4B86-84C0-7C9E4497DA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29F8B36E-84D0-4B86-84C0-7C9E4497DA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29F8B36E-84D0-4B86-84C0-7C9E4497DA13}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
