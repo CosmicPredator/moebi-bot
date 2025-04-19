@@ -1,0 +1,5 @@
+.idea
+Moebi.sln.DotSettings.user
+Moebi.Bot/obj/*
+Moebi.Bot/bin/*
+Moebi.Bot/config.json

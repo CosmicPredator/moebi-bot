@@ -1,0 +1,27 @@
+{
+  "Discord": {
+    "GuildId": "<your guild id>",
+    "BotToken": "<your discord bot token>"
+  },
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console" ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) -> {Message:lj}{NewLine}{Exception}"
+        }
+      }
+    ],
+    "Properties": {
+      "Application": "Moebi"
+    }
+  }
+}
